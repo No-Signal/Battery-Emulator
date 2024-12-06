@@ -7,6 +7,7 @@
 #include "../utils/events.h"
 #include "../utils/led_handler.h"
 #include "../utils/timer.h"
+#include "../../lib/ayushsharma82-WebSerial/src/WebSerial.h"
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -411,8 +412,12 @@ void init_webserver() {
   // Initialize ElegantOTA
   init_ElegantOTA();
 
+  // Initialize WebSerial
+  WebSerial.begin(&server);
+
   // Start server
   server.begin();
+  
 }
 
 String getConnectResultString(wl_status_t status) {

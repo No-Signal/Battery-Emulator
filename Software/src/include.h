@@ -16,6 +16,9 @@
 #include "charger/CHARGERS.h"
 #include "inverter/INVERTERS.h"
 
+#include "devboard/utils/logger.h"
+extern Logger logger;
+
 /* - ERROR CHECKS BELOW, DON'T TOUCH - */
 
 #if !defined(HW_CONFIGURED)

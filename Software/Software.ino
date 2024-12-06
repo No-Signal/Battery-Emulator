@@ -15,6 +15,7 @@
 #include "src/devboard/utils/events.h"
 #include "src/devboard/utils/led_handler.h"
 #include "src/devboard/utils/value_mapping.h"
+#include "src/devboard/utils/logger.h"
 #include "src/lib/YiannisBourkelis-Uptime-Library/src/uptime.h"
 #include "src/lib/YiannisBourkelis-Uptime-Library/src/uptime_formatter.h"
 #include "src/lib/bblanchon-ArduinoJson/ArduinoJson.h"
@@ -23,6 +24,7 @@
 #include "src/lib/eModbus-eModbus/scripts/mbServerFCs.h"
 #include "src/lib/miwagner-ESP32-Arduino-CAN/CAN_config.h"
 #include "src/lib/miwagner-ESP32-Arduino-CAN/ESP32CAN.h"
+#include "src/lib/ayushsharma82-WebSerial/src/WebSerial.h"
 
 #ifdef WIFI
 #include "src/devboard/wifi/wifi.h"
@@ -112,6 +114,8 @@ MyTimer connectivity_task_timer_10s(INTERVAL_10_S);
 MyTimer loop_task_timer_10s(INTERVAL_10_S);
 
 MyTimer check_pause_2s(INTERVAL_2_S);
+
+Logger logger = Logger(log_level::Info, true, true);
 
 // Contactor parameters
 #ifdef CONTACTOR_CONTROL
@@ -244,6 +248,7 @@ void connectivity_loop(void* task_time_us) {
     wifi_monitor();
 #ifdef WEBSERVER
     ota_monitor();
+    WebSerial.loop();
 #endif
     END_TIME_MEASUREMENT_MAX(wifi, datalayer.system.status.wifi_task_10s_max_us);
 #ifdef MQTT

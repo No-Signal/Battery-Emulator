@@ -15,9 +15,11 @@ CAN_frame TEST = {.FD = false,
                   .data = {0x10, 0x64, 0x00, 0xB0, 0x00, 0x1E, 0x00, 0x8F}};
 
 void print_units(char* header, int value, char* units) {
-  Serial.print(header);
-  Serial.print(value);
-  Serial.print(units);
+  logger.LogInfo(header);
+  char cstr[5];
+  sprintf(cstr, "%d",value);
+  logger.LogInfo(cstr);
+  logger.LogInfo(units);
 }
 
 void update_values_battery() { /* This function puts fake values onto the parameters sent towards the inverter */
@@ -55,7 +57,7 @@ void update_values_battery() { /* This function puts fake values onto the parame
 
 /*Finally print out values to serial if configured to do so*/
 #ifdef DEBUG_VIA_USB
-  Serial.println("FAKE Values going to inverter");
+  logger.LogInfoln("FAKE Values going to inverter");
   print_units("SOH%: ", (datalayer.battery.status.soh_pptt * 0.01), "% ");
   print_units(", SOC%: ", (datalayer.battery.status.reported_soc * 0.01), "% ");
   print_units(", Voltage: ", (datalayer.battery.status.voltage_dV * 0.1), "V ");
@@ -65,7 +67,7 @@ void update_values_battery() { /* This function puts fake values onto the parame
   print_units(", Min temp: ", (datalayer.battery.status.temperature_min_dC * 0.1), "°C ");
   print_units(", Max cell voltage: ", datalayer.battery.status.cell_max_voltage_mV, "mV ");
   print_units(", Min cell voltage: ", datalayer.battery.status.cell_min_voltage_mV, "mV ");
-  Serial.println("");
+  logger.LogInfoln("");
 #endif
 }
 
