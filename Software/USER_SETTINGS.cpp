@@ -21,10 +21,10 @@ volatile CAN_Configuration can_config = {
 
 #ifdef WIFI
 
-volatile uint8_t AccessPointEnabled = true;           //Set to either true/false to enable direct wifi access point
-std::string ssid = "REPLACE_WITH_YOUR_SSID";          // Maximum of 63 characters
-std::string password = "REPLACE_WITH_YOUR_PASSWORD";  // Minimum of 8 characters
-const char* ssidAP = "Battery Emulator";  // Maximum of 63 characters, also used for device name on web interface
+volatile uint8_t AccessPointEnabled = true;  //Set to either true/false to enable direct wifi access point
+std::string ssid = "";                       // Maximum of 63 characters
+std::string password = "";                   // Minimum of 8 characters
+const char* ssidAP = "Battery Emulator";     // Maximum of 63 characters, also used for device name on web interface
 const char* passwordAP = "123456789";  // Minimum of 8 characters; set to NULL if you want the access point to be open
 const uint8_t wifi_channel = 0;        // Set to 0 for automatic channel selection
 
@@ -43,15 +43,15 @@ const char* http_password = "admin";  // password to webserver authentication;
 #endif  // WEBSERVER
 // MQTT
 #ifdef MQTT
-const char* mqtt_user = "REDACTED";      // Set NULL for no username
-const char* mqtt_password = "REDACTED";  // Set NULL for no password
+const char* mqtt_user = NULL;      // Set NULL for no username
+const char* mqtt_password = NULL;  // Set NULL for no password
 #ifdef MQTT_MANUAL_TOPIC_OBJECT_NAME
 const char* mqtt_topic_name =
-    "BE";  // Custom MQTT topic name. Previously, the name was automatically set to "battery-emulator_esp32-XXXXXX"
+    "BEB";  // Custom MQTT topic name. Previously, the name was automatically set to "battery-emulator_esp32-XXXXXX"
 const char* mqtt_object_id_prefix =
-    "be_";  // Custom prefix for MQTT object ID. Previously, the prefix was automatically set to "esp32-XXXXXX_"
+    "bbe_";  // Custom prefix for MQTT object ID. Previously, the prefix was automatically set to "esp32-XXXXXX_"
 const char* mqtt_device_name =
-    "Battery Emulator";  // Custom device name in Home Assistant. Previously, the name was automatically set to "BatteryEmulator_esp32-XXXXXX"
+    "Battery Emulator Batteries";  // Custom device name in Home Assistant. Previously, the name was automatically set to "BatteryEmulator_esp32-XXXXXX"
 #endif  // MQTT_MANUAL_TOPIC_OBJECT_NAME
 #endif  // USE_MQTT
 #endif  // WIFI
