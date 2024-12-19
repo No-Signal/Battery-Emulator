@@ -51,7 +51,7 @@
 //#define SMA_LV_CAN       //Enable this line to emulate a "SMA Sunny Island 48V battery" over CAN bus
 //#define SMA_TRIPOWER_CAN //Enable this line to emulate a "SMA Home Storage battery" over CAN bus
 //#define SOFAR_CAN        //Enable this line to emulate a "Sofar Energy Storage Inverter High Voltage BMS General Protocol (Extended Frame)" over CAN bus
-#define SOLAX_CAN        //Enable this line to emulate a "SolaX Triple Power LFP" over CAN bus
+#define SOLAX_CAN  //Enable this line to emulate a "SolaX Triple Power LFP" over CAN bus
 
 /* Select hardware used for Battery-Emulator */
 #define HW_LILYGO
@@ -116,9 +116,9 @@
 
 /* Battery settings */
 // Predefined total energy capacity of the battery in Watt-hours
-#define BATTERY_WH_MAX 30000
+#define BATTERY_WH_MAX 24000
 // Increases battery life. If true will rescale SOC between the configured min/max-percentage
-#define BATTERY_USE_SCALED_SOC true
+#define BATTERY_USE_SCALED_SOC false
 // 8000 = 80.0% , Max percentage the battery will charge to (Inverter gets 100% when reached)
 #define BATTERY_MAXPERCENTAGE 8000
 // 2000 = 20.0% , Min percentage the battery will discharge to (Inverter gets 0% when reached)
