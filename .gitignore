@@ -24,4 +24,4 @@ compile.bat
 *.bin
 
 # Ignore secret file
-#USER_SECRETS.h
+USER_SECRETS.h
