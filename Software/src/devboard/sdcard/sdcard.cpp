@@ -155,17 +155,21 @@ void write_log_to_sdcard() {
 }
 
 void init_logging_buffers() {
+#if defined(LOG_CAN_TO_SD)
   can_bufferHandle = xRingbufferCreate(32 * 1024, RINGBUF_TYPE_BYTEBUF);
   if (can_bufferHandle == NULL) {
     Serial.println("Failed to create CAN ring buffer!");
     return;
   }
+#endif  // defined(LOG_CAN_TO_SD)
 
-  log_bufferHandle = xRingbufferCreate(32 * 1024, RINGBUF_TYPE_BYTEBUF);
+#if defined(LOG_TO_SD)
+  log_bufferHandle = xRingbufferCreate(1024, RINGBUF_TYPE_BYTEBUF);
   if (log_bufferHandle == NULL) {
     Serial.println("Failed to create log ring buffer!");
     return;
   }
+#endif  // defined(LOG_TO_SD)
 }
 
 void init_sdcard() {
