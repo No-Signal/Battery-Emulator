@@ -54,12 +54,12 @@ void pause_log_writing() {
   logging_paused = true;
 }
 
-void add_can_frame_to_buffer(CAN_frame frame, frameDirection msgDir) {
+void add_can_frame_to_buffer(CAN_frame frame, frameDirection msgDir, int can_id_offset) {
 
   if (!sd_card_active)
     return;
 
-  CAN_log_frame log_frame = {frame, msgDir};
+  CAN_log_frame log_frame = {frame, msgDir, can_id_offset};
   if (xRingbufferSend(can_bufferHandle, &log_frame, sizeof(log_frame), 0) != pdTRUE) {
     Serial.println("Failed to send CAN frame to ring buffer!");
     return;
@@ -95,12 +95,12 @@ void write_can_frame_to_sdcard() {
       can_log_file = SD.open(CAN_LOG_FILE, FILE_APPEND);
       can_file_open = true;
     }
-
+    int CAN_ID = log_frame->frame.ID + log_frame->can_id_offset;
     uint8_t i = 0;
     can_log_file.print("(");
     can_log_file.print(millis() / 1000.0);
     (log_frame->direction == MSG_RX) ? can_log_file.print(") RX0 ") : can_log_file.print(") TX1 ");
-    can_log_file.print(log_frame->frame.ID, HEX);
+    can_log_file.print(CAN_ID, HEX);
     can_log_file.print(" [");
     can_log_file.print(log_frame->frame.DLC);
     can_log_file.print("] ");

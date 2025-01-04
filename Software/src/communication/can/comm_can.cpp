@@ -123,19 +123,30 @@ void transmit_can() {
 }
 
 void transmit_can_frame(CAN_frame* tx_frame, int interface) {
+#ifdef SECOND_BATTERY_CAN_ID_OFFSET
+  transmit_can_frame(tx_frame, interface, 0);
+}
+
+void transmit_can_frame(CAN_frame* tx_frame, int interface, int can_id_offset) {
+#else
+  int can_id_offset = 0;
+#endif  // SECOND_BATTERY_CAN_ID_OFFSET
+
   if (!allowed_to_send_CAN) {
     return;
   }
-  print_can_frame(*tx_frame, frameDirection(MSG_TX));
+  uint32_t CAN_ID = tx_frame->ID + can_id_offset;
+
+  print_can_frame(*tx_frame, frameDirection(MSG_TX), can_id_offset);
 
 #ifdef LOG_CAN_TO_SD
-  add_can_frame_to_buffer(*tx_frame, frameDirection(MSG_TX));
+  add_can_frame_to_buffer(*tx_frame, frameDirection(MSG_TX), can_id_offset);
 #endif
 
   switch (interface) {
     case CAN_NATIVE:
       CAN_frame_t frame;
-      frame.MsgID = tx_frame->ID;
+      frame.MsgID = CAN_ID;
       frame.FIR.B.FF = tx_frame->ext_ID ? CAN_frame_ext : CAN_frame_std;
       frame.FIR.B.DLC = tx_frame->DLC;
       frame.FIR.B.RTR = CAN_no_RTR;
@@ -148,7 +159,7 @@ void transmit_can_frame(CAN_frame* tx_frame, int interface) {
 #ifdef CAN_ADDON
       //Struct with ACAN2515 library format, needed to use the MCP2515 library for CAN2
       CANMessage MCP2515Frame;
-      MCP2515Frame.id = tx_frame->ID;
+      MCP2515Frame.id = CAN_ID;
       MCP2515Frame.ext = tx_frame->ext_ID ? CAN_frame_ext : CAN_frame_std;
       MCP2515Frame.len = tx_frame->DLC;
       MCP2515Frame.rtr = false;
@@ -169,7 +180,7 @@ void transmit_can_frame(CAN_frame* tx_frame, int interface) {
       } else {  //Classic CAN message
         MCP2518Frame.type = CANFDMessage::CAN_DATA;
       }
-      MCP2518Frame.id = tx_frame->ID;
+      MCP2518Frame.id = CAN_ID;
       MCP2518Frame.ext = tx_frame->ext_ID ? CAN_frame_ext : CAN_frame_std;
       MCP2518Frame.len = tx_frame->DLC;
       for (uint8_t i = 0; i < MCP2518Frame.len; i++) {
@@ -263,12 +274,16 @@ void receive_frame_canfd_addon() {  // This section checks if we have a complete
 
 // Support functions
 void print_can_frame(CAN_frame frame, frameDirection msgDir) {
+  print_can_frame(frame, msgDir, 0);
+}
+void print_can_frame(CAN_frame frame, frameDirection msgDir, int can_id_offset) {
+  uint32_t CAN_ID = frame.ID + can_id_offset;
 #ifdef DEBUG_CAN_DATA  // If enabled in user settings, print out the CAN messages via USB
   uint8_t i = 0;
   Serial.print("(");
   Serial.print(millis() / 1000.0);
   (msgDir == MSG_RX) ? Serial.print(") RX0 ") : Serial.print(") TX1 ");
-  Serial.print(frame.ID, HEX);
+  Serial.print(CAN_ID, HEX);
   Serial.print(" [");
   Serial.print(frame.DLC);
   Serial.print("] ");
@@ -300,7 +315,7 @@ void print_can_frame(CAN_frame frame, frameDirection msgDir) {
         snprintf(message_string + offset, message_string_size - offset, "%s ", (msgDir == MSG_RX) ? "RX0" : "TX1");
 
     // Add ID and DLC
-    offset += snprintf(message_string + offset, message_string_size - offset, "%X [%u] ", frame.ID, frame.DLC);
+    offset += snprintf(message_string + offset, message_string_size - offset, "%X [%u] ", CAN_ID, frame.DLC);
 
     // Add data bytes
     for (uint8_t i = 0; i < frame.DLC; i++) {
@@ -321,7 +336,7 @@ void map_can_frame_to_variable(CAN_frame* rx_frame, int interface) {
   print_can_frame(*rx_frame, frameDirection(MSG_RX));
 
 #ifdef LOG_CAN_TO_SD
-  add_can_frame_to_buffer(*rx_frame, frameDirection(MSG_RX));
+  add_can_frame_to_buffer(*rx_frame, frameDirection(MSG_RX), 0);
 #endif
 
   if (interface == can_config.battery) {

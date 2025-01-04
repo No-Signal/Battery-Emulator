@@ -16,7 +16,7 @@ void init_logging_buffers();
 void init_sdcard();
 void print_sdcard_details();
 
-void add_can_frame_to_buffer(CAN_frame frame, frameDirection msgDir);
+void add_can_frame_to_buffer(CAN_frame frame, frameDirection msgDir, int can_id_offset);
 void write_can_frame_to_sdcard();
 
 void pause_can_writing();

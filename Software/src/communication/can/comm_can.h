@@ -89,6 +89,15 @@ void receive_frame_canfd_addon();
 void print_can_frame(CAN_frame frame, frameDirection msgDir);
 
 /**
+ * @brief print CAN frames via USB
+ *
+ * @param[in] void
+ *
+ * @return void
+ */
+void print_can_frame(CAN_frame frame, frameDirection msgDir, int can_id_offset);
+
+/**
  * @brief Map CAN frame from specified interface to variable
  *
  * @param[in] CAN_frame* rx_frame

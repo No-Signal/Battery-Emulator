@@ -56,6 +56,7 @@ enum frameDirection { MSG_RX, MSG_TX };  //RX = 0, TX = 1
 typedef struct {
   CAN_frame frame;
   frameDirection direction;
+  int can_id_offset;
 } CAN_log_frame;
 
 std::string getBMSStatus(bms_status_enum status);

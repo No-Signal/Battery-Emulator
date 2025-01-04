@@ -503,7 +503,11 @@ void update_values_battery2() {  // Handle the values coming in from battery #2
   }
 }
 void handle_incoming_can_frame_battery2(CAN_frame rx_frame) {
-  switch (rx_frame.ID) {
+  uint32_t CAN_ID = rx_frame.ID;
+#ifdef SECOND_BATTERY_CAN_ID_OFFSET
+  CAN_ID -= SECOND_BATTERY_CAN_ID_OFFSET;
+#endif
+  switch (CAN_ID) {
     case 0x1DB:
       if (is_message_corrupt(rx_frame)) {
         datalayer.battery2.status.CAN_error_counter++;
@@ -614,7 +618,11 @@ void handle_incoming_can_frame_battery2(CAN_frame rx_frame) {
         battery2_group_7bb = rx_frame.data.u8[3];
       }
 
+#ifdef SECOND_BATTERY_CAN_ID_OFFSET
+      transmit_can_frame(&LEAF_NEXT_LINE_REQUEST, can_config.battery_double, SECOND_BATTERY_CAN_ID_OFFSET);
+#else
       transmit_can_frame(&LEAF_NEXT_LINE_REQUEST, can_config.battery_double);
+#endif  // SECOND_BATTERY_CAN_ID_OFFSET
 
       if (battery2_group_7bb == 0x01)  //High precision SOC, Current, voltages etc.
       {
@@ -1092,7 +1100,13 @@ void transmit_can_battery() {
       }
       transmit_can_frame(&LEAF_1D4, can_config.battery);
 #ifdef DOUBLE_BATTERY
+
+#ifdef SECOND_BATTERY_CAN_ID_OFFSET
+      transmit_can_frame(&LEAF_1D4, can_config.battery_double, SECOND_BATTERY_CAN_ID_OFFSET);
+#else
       transmit_can_frame(&LEAF_1D4, can_config.battery_double);
+#endif  // SECOND_BATTERY_CAN_ID_OFFSET
+
 #endif  // DOUBLE_BATTERY
 
       switch (mprun10r) {
@@ -1188,7 +1202,13 @@ void transmit_can_battery() {
 #ifndef NISSANLEAF_CHARGER
       transmit_can_frame(&LEAF_1F2, can_config.battery);
 #ifdef DOUBLE_BATTERY
+
+#ifdef SECOND_BATTERY_CAN_ID_OFFSET
+      transmit_can_frame(&LEAF_1F2, can_config.battery_double, SECOND_BATTERY_CAN_ID_OFFSET);
+#else
       transmit_can_frame(&LEAF_1F2, can_config.battery_double);
+#endif  // SECOND_BATTERY_CAN_ID_OFFSET
+
 #endif  // DOUBLE_BATTERY
 #endif
 
@@ -1215,7 +1235,13 @@ void transmit_can_battery() {
       // VCM message, containing info if battery should sleep or stay awake
       transmit_can_frame(&LEAF_50B, can_config.battery);  // HCM_WakeUpSleepCommand == 11b == WakeUp, and CANMASK = 1
 #ifdef DOUBLE_BATTERY
+
+#ifdef SECOND_BATTERY_CAN_ID_OFFSET
+      transmit_can_frame(&LEAF_50B, can_config.battery_double, SECOND_BATTERY_CAN_ID_OFFSET);
+#else
       transmit_can_frame(&LEAF_50B, can_config.battery_double);
+#endif  // SECOND_BATTERY_CAN_ID_OFFSET
+
 #endif  // DOUBLE_BATTERY
 
       LEAF_50C.data.u8[3] = mprun100;
@@ -1239,7 +1265,13 @@ void transmit_can_battery() {
       }
       transmit_can_frame(&LEAF_50C, can_config.battery);
 #ifdef DOUBLE_BATTERY
+
+#ifdef SECOND_BATTERY_CAN_ID_OFFSET
+      transmit_can_frame(&LEAF_50C, can_config.battery_double, SECOND_BATTERY_CAN_ID_OFFSET);
+#else
       transmit_can_frame(&LEAF_50C, can_config.battery_double);
+#endif  // SECOND_BATTERY_CAN_ID_OFFSET
+
 #endif  // DOUBLE_BATTERY
 
       mprun100 = (mprun100 + 1) % 4;  // mprun100 cycles between 0-1-2-3-0-1...
@@ -1258,7 +1290,13 @@ void transmit_can_battery() {
 
         transmit_can_frame(&LEAF_GROUP_REQUEST, can_config.battery);
 #ifdef DOUBLE_BATTERY
+
+#ifdef SECOND_BATTERY_CAN_ID_OFFSET
+        transmit_can_frame(&LEAF_GROUP_REQUEST, can_config.battery_double, SECOND_BATTERY_CAN_ID_OFFSET);
+#else
         transmit_can_frame(&LEAF_GROUP_REQUEST, can_config.battery_double);
+#endif  // SECOND_BATTERY_CAN_ID_OFFSET
+
 #endif  // DOUBLE_BATTERY
       }
 
